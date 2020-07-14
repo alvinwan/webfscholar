@@ -24,6 +24,7 @@ def add_parser(subparsers, parent):
 def main(args):
     author = config.get_author(args)
     author.fill()
+    print("Filling out bibtex...")
 
     bib = []
     with tqdm(total=len(author.publications)) as pbar:

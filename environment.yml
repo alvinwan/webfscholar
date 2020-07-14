@@ -2,3 +2,4 @@ dependencies:
   - questionary
   - scholarly
   - tqdm
+  - jinja2
