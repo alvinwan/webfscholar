@@ -6,6 +6,7 @@ from bibtexparser.bwriter import BibTexWriter
 from bibtexparser.bibdatabase import BibDatabase
 import bibtexparser
 from tqdm import tqdm
+import json
 import os
 
 
@@ -24,16 +25,17 @@ def add_parser(subparsers, parent):
 
 
 def main(args):
-    publications = profile.get_publications(config.get_author_id(args))
+    publications, name = profile.get_publications(config.get_author_id(args))
 
-    for i, publication in enumerate(publications):
+    for i, publication in tqdm(enumerate(publications)):
         publication['ENTRYTYPE'] = publication.get('ENTRYTYPE', 'article')
         publication['ID'] = publication.get('ID', str(i))
 
     db = BibDatabase()
-    writer = BibTexWriter()
     db.entries = publications
+    db.preambles = [json.dumps({"name": name})]
 
+    writer = BibTexWriter()
     with open(PATH_BIBTEX, "w") as f:
         f.write(writer.write(db))
     print(f"Saved {len(publications)} bibtex entries to {PATH_BIBTEX}")

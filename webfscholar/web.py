@@ -1,6 +1,7 @@
 from webfscholar import bibtex
 from jinja2 import Template
 from pathlib import Path
+import json
 
 
 PATH_TEMPLATES = Path('webfscholar/templates')
@@ -21,6 +22,15 @@ def main(args):
     with open(PATH_TEMPLATES / THEMES[args.theme]) as f:
         template = Template(f.read())
 
-    out = template.render(publications=db.entries)
+    metadata = json.loads(db.preambles[0])
+    name = metadata['name']
+    publications = db.entries
+
+    for publication in publications:
+        publication['author'] = publication['author'] \
+            .replace(' and ', ', ') \
+            .replace(name, f'<b>{name}</b>')
+
+    out = template.render(publications=publications)
     with open('index.html', 'w') as f:
         f.write(out)
