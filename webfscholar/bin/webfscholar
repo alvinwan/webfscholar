@@ -21,7 +21,7 @@ def get_parser():
     bibtex.add_parser(subparsers, parent)
     web.add_parser(subparsers, parent)
 
-    parser_clean = subparsers.add_parser('clean')
+    parser_clean = subparsers.add_parser('clean', parents=[parent])
 
     return parser
 
