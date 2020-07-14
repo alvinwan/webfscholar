@@ -1,5 +1,6 @@
 from configparser import ConfigParser
 from scholarly import scholarly
+import itertools
 import questionary
 
 PATH_CONFIG = "config.ini"
@@ -9,6 +10,37 @@ def get_author_id(args):
     if get_cfg('main.id') is None or args.reset:
         main(args)
     return get_cfg('main.id')
+
+
+def search_author(batch_size=10):
+    name = questionary.text("Search for yourself (name, institution):").ask()
+    query = scholarly.search_author(name)
+    authors = list(itertools.islice(query, batch_size))
+
+    if len(authors) > 0:
+        return pick_author(query, authors, batch_size)
+    if len(authors) == 1:
+        return authors[0]
+    print('Try again. No authors found.')
+    return search_author()
+
+
+def pick_author(query, authors, batch_size=10):
+    index = len(authors)
+    choices = [f"{author.name} ({author.email})" for author in authors]
+
+    while index == len(choices):
+        if len(choices) == batch_size:
+            choices += ["Next"]
+        choice = questionary.select("Which one is you?", choices=choices).ask()
+        if choice is None:
+            return search_author(batch_size)
+        index = choices.index(choice)
+
+        if index < batch_size:
+            return authors[index]
+        authors = list(itertools.islice(query, 10))
+        choices = [f"{author.name} ({author.email})" for author in authors]
 
 
 def cfg():
@@ -22,7 +54,6 @@ def cfg():
 
 def get_cfg(fqkey):
     config = cfg()
-    results = []
     section, key = fqkey.split('.', 1)
     if key in config.options(section):
         return config.get(section, key)
@@ -48,7 +79,6 @@ def main(args):
     if args.get:
         print(get_cfg(args.key))
         return
-    if args.set:
-        set_cfg({args.key: args.set})
-        print(f"Successfully saved author ID {args.set} to {PATH_CONFIG}")
-        return
+    id = args.set or search_author().id
+    set_cfg({args.key: id})
+    print(f"Successfully saved author ID {id} to {PATH_CONFIG}")
