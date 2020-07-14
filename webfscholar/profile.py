@@ -20,7 +20,7 @@ def hook_journal(journal):
     if 'Computer Vision and Pattern' in journal and 'IEEE' in journal:
         return 'CVPR'
     if journal.lower().startswith('proceedings of the'):
-        return journal[len('proceedings of the'):]
+        journal = journal[len('proceedings of the'):]
 
     contains = [abbreviation in journal for abbreviation in CONF_ABBREVIATIONS]
     if any(contains):
@@ -36,7 +36,7 @@ def normalize_name(name):
     for p in string.punctuation:
         name = name.replace(p, '')
     return name
-    
+
 
 def get_publications(author_id, start=0, length=100):
     response = requests.get(
