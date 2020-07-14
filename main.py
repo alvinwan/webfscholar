@@ -4,29 +4,28 @@
 2. Generate webpage from bibtex
 """
 
-from webfscholar import config, bibtex
+from webfscholar import config, bibtex, web
 import argparse
 
 
 def get_parser():
+    parent = argparse.ArgumentParser(add_help=False)
+    parent.add_argument('--reset', action='store_true')
+
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest='command')
 
-    config.add_parser(subparsers)
+    config.add_parser(subparsers, parent)
+    bibtex.add_parser(subparsers, parent)
+    web.add_parser(subparsers, parent)
 
-    parser_build = subparsers.add_parser('bibtex')
-    parser_web = subparsers.add_parser('web')
     return parser
-
-
-def web(args):
-    pass
 
 
 command_to_function = {
     'config': config.main,
     'bibtex': bibtex.main,
-    'web': web
+    'web': web.main
 }
 
 

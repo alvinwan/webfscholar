@@ -1,12 +1,24 @@
 """Populate local bibtex"""
 
-
 from scholarly import scholarly
 from webfscholar import config
+import bibtexparser
 from tqdm import tqdm
+import os
 
 
 PATH_BIBTEX = "references.bib"
+
+
+def get_bibtex(args):
+    if not os.path.exists(PATH_BIBTEX):
+        main(args)
+    with open(PATH_BIBTEX) as f:
+        return bibtexparser.load(f)
+
+
+def add_parser(subparsers, parent):
+    parser_build = subparsers.add_parser('bibtex', parents=[parent])
 
 
 def main(args):
@@ -25,3 +37,4 @@ def main(args):
     with open(PATH_BIBTEX, "w") as f:
         for item in bib:
             f.write(item + "\n")
+    print(f"Saved {len(bib)} bibtex entries to {PATH_BIBTEX}")

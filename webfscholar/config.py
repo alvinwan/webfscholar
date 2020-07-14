@@ -8,8 +8,7 @@ PATH_CONFIG = "config.ini"
 def get_author(args):
     """For use by other scrips"""
     query = get_cfg_query()
-    if query is None:
-        print("No Google Scholar profile is configured yet. Asking for config...")
+    if query is None or args.reset:
         main(args)
         query = get_cfg_query()
     return next(scholarly.search_author(query))
@@ -96,14 +95,13 @@ def pick_author():
     return author
 
 
-def add_parser(subparsers):
-    parser_config = subparsers.add_parser('config')
-    parser_config.add_argument('--reset', action='store_true')
+def add_parser(subparsers, parent):
+    parser_config = subparsers.add_parser('config', parents=[parent])
 
 
 def main(args):
     query = get_cfg_query()
-    if query and not getattr(args, 'reset', False):
+    if query and not args.reset:
         print(f"Already configured with {query}. Use --reset to reset.")
         return
 
@@ -113,5 +111,4 @@ def main(args):
 
     query = author2str(author)
     set_cfg_query(query)
-    print(f"Saved {query} to {PATH_CONFIG}. Next, run `python main.py bibtex` to "
-           "generate publications index from Google Scholar.")
+    print(f"Saved {query} to {PATH_CONFIG}.")
