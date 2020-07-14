@@ -2,6 +2,8 @@
 
 from scholarly import scholarly
 from webfscholar import config, profile
+from bibtexparser.bwriter import BibTexWriter
+from bibtexparser.bibdatabase import BibDatabase
 import bibtexparser
 from tqdm import tqdm
 import os
@@ -23,14 +25,15 @@ def add_parser(subparsers, parent):
 
 def main(args):
     publications = profile.get_publications(config.get_author_id(args))
-    
-    bib = []
+
     for i, publication in enumerate(publications):
         publication['ENTRYTYPE'] = publication.get('ENTRYTYPE', 'article')
         publication['ID'] = publication.get('ID', str(i))
-        bib.append(bibtexparser.dumps(publication))
+
+    db = BibDatabase()
+    writer = BibTexWriter()
+    db.entries = publications
 
     with open(PATH_BIBTEX, "w") as f:
-        for item in bib:
-            f.write(item + "\n")
-    print(f"Saved {len(bib)} bibtex entries to {PATH_BIBTEX}")
+        f.write(writer.write(db))
+    print(f"Saved {len(publications)} bibtex entries to {PATH_BIBTEX}")
