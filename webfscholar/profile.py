@@ -28,12 +28,22 @@ def hook_journal(journal):
     return journal
 
 
+def normalize_name(name):
+    if name.count(' ') > 1:
+        parts = name.split()
+        name = f'{parts[0]} {parts[-1]}'
+    name = name.strip().title()
+    for p in string.punctuation:
+        name = name.replace(p, '')
+    return name
+    
+
 def get_publications(author_id, start=0, length=100):
     response = requests.get(
         f'https://scholar.google.com/citations?user={author_id}&hl=en&cstart={start}&pagesize={length}&sortby=pubdate')
     soup = BeautifulSoup(response.text, features='html.parser')
 
-    name = soup.find(id='gsc_prf_in').text
+    name = normalize_name(soup.find(id='gsc_prf_in').text)
     divs = soup.findAll(class_='gsc_a_tr')
 
     publications = []
@@ -73,6 +83,9 @@ def get_publications(author_id, start=0, length=100):
                 papers = arxiv.query(query=query, max_results=1)
 
             paper = papers[0] if papers else None
+
+            if paper:
+                paper['authors'] = list(map(normalize_name, paper['authors']))
 
             # copy arxiv paper data over to publication
             if paper and name in paper['authors']:
