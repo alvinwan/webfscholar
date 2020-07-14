@@ -5,7 +5,7 @@ import os
 import json
 
 
-PATH_TEMPLATES = Path(os.getcwd()) / 'templates'
+PATH_TEMPLATES = Path(os.path.dirname(os.path.realpath(__file__))) / 'templates'
 THEMES = {
     'montserrat-badges': 'montserrat-badges.html'
 }
