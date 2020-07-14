@@ -2,6 +2,8 @@ from configparser import ConfigParser
 from scholarly import scholarly
 import questionary
 
+PATH_CONFIG = "config.ini"
+
 
 def get_author(args):
     """For use by other scrips"""
@@ -35,7 +37,7 @@ def author2str(author):
 
 def get_cfg():
     config = ConfigParser()
-    config.read('config.ini')
+    config.read(PATH_CONFIG)
 
     if not config.has_section('main'):
         config.add_section('main')
@@ -51,7 +53,7 @@ def get_cfg_query():
 def set_cfg_query(query):
     cfg = get_cfg()
     cfg.set('main', 'query', query)
-    with open('config.ini', 'w') as f:
+    with open(PATH_CONFIG, 'w') as f:
         cfg.write(f)
 
 
@@ -101,7 +103,7 @@ def add_parser(subparsers):
 
 def main(args):
     query = get_cfg_query()
-    if query and not args.reset:
+    if query and not getattr(args, 'reset', False):
         print(f"Already configured with {query}. Use --reset to reset.")
         return
 
@@ -111,5 +113,5 @@ def main(args):
 
     query = author2str(author)
     set_cfg_query(query)
-    print(f"Saved {query} to config.ini. Next, run `python main.py bibtex` to "
+    print(f"Saved {query} to {PATH_CONFIG}. Next, run `python main.py bibtex` to "
            "generate publications index from Google Scholar.")
