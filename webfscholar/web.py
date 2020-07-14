@@ -5,6 +5,7 @@ import os
 import json
 
 
+PATH_OUT = 'index.html'
 PATH_TEMPLATES = Path(os.path.dirname(os.path.realpath(__file__))) / 'templates'
 THEMES = {
     'montserrat-badges': 'montserrat-badges.html'
@@ -32,7 +33,7 @@ def main(args):
             .replace(name, f'<b>{name}</b>')
 
     out = template.render(publications=publications)
-    with open('index.html', 'w') as f:
+    with open(PATH_OUT, 'w') as f:
         f.write(out)
 
-    print('Webpage written to index.html. Open in browser to preview.')
+    print(f'Webpage written to {PATH_OUT}. Open in browser to preview.')

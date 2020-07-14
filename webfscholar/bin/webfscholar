@@ -7,6 +7,7 @@
 
 from webfscholar import config, bibtex, web
 import argparse
+import os
 
 
 def get_parser():
@@ -20,13 +21,23 @@ def get_parser():
     bibtex.add_parser(subparsers, parent)
     web.add_parser(subparsers, parent)
 
+    parser_clean = subparsers.add_parser('clean')
+
     return parser
+
+
+def clean(_):
+    os.remove(bibtex.PATH_BIBTEX)
+    os.remove(config.PATH_CONFIG)
+    os.remove(web.PATH_OUT)
+    os.remove('scholar.log')
 
 
 command_to_function = {
     'config': config.main,
     'bibtex': bibtex.main,
-    'web': web.main
+    'web': web.main,
+    'clean': clean
 }
 
 

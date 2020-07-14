@@ -14,6 +14,8 @@ PATH_BIBTEX = "references.bib"
 
 
 def get_bibtex(args):
+    if args.reset:
+        main(args)
     if not os.path.exists(PATH_BIBTEX):
         main(args)
     with open(PATH_BIBTEX) as f:

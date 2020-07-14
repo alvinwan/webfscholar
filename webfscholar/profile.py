@@ -46,7 +46,7 @@ def get_publications(author_id, start=0, length=100):
                 "citations": soup_.find(class_='gsc_a_ac').text or '0',
                 "url": 'https://scholar.google.com' + soup_.find(class_='gsc_a_at')['data-href']
             }
-            pbar.set_description(publication["title"])
+            pbar.set_description(publication["title"][:10])
 
             # parse year
             year = soup_.find(class_='gs_oph')
