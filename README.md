@@ -1,14 +1,26 @@
 # webfscholar
+
 Generate publications webpage from a google scholar. This occurs in two steps:
 
 1. Generate bibtex from a google scholar
 2. Generate webpage from a bibtex
 
-By using bibtex as an intermediate representation, you can choose to make
-modifications beyond what is supported in the current bibtex-builder. Unlike
-most Google Scholar unofficial Python APIs, the Google Scholar utilities
-provided in this package stay faithful to the information presented on the
-user profile page. The website-builder also supports:
+The intermediate bibtex allows you to plug-and-play with other
+auto-publication-webpage services. Furthermore, unlike most Google Scholar
+unofficial APIs, this library:
 
-- Several website themes
+- Uses information pulled directly from the Google Scholar profile page, as
+  opposed to un-configurable search results. This means `webfscholar` will
+  respect any custom titles or removed publications.
+- Supplants Google Scholar information using ArXiv.
+
+The website-builder also supports:
+
+- A default, mobile-friendly theme with a search bar
 - Multiple bibtexs, including online sources
+
+## Installation
+
+```
+pip install webfscholar
+```

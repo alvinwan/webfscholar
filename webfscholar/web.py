@@ -13,7 +13,6 @@ THEMES = {
 def add_parser(subparsers, parent):
     parser_web = subparsers.add_parser('web', parents=[parent])
     parser_web.add_argument('--theme', choices=THEMES.keys(), default='montserrat-badges')
-    parser_web.add_argument('--search', action='store_true', help='Include search bar')
 
 
 def main(args):
