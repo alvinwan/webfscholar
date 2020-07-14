@@ -33,7 +33,7 @@ def main():
     parser = get_parser()
     args = parser.parse_args()
 
-    command = command_to_function.get(args.command, 'web')
+    command = command_to_function.get(args.command, web.main)
     command(args)
 
 

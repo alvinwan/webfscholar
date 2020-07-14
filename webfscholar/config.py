@@ -70,15 +70,14 @@ def set_cfg(fqkey_to_value):
 
 def add_parser(subparsers, parent):
     parser_config = subparsers.add_parser('config', parents=[parent])
-    parser_config.add_argument('--key', default='main.id', help='config key')
     parser_config.add_argument('--set', help='save Google Scholar id')
     parser_config.add_argument('--get', action='store_true', help='get Google Scholar id')
 
 
 def main(args):
-    if args.get:
+    if getattr(args, 'get', None):
         print(get_cfg(args.key))
         return
-    id = args.set or search_author().id
-    set_cfg({args.key: id})
+    id = getattr(args, 'set', None) or search_author().id
+    set_cfg({'main.id': id})
     print(f"Successfully saved author ID {id} to {PATH_CONFIG}")

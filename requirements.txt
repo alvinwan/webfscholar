@@ -1,0 +1,7 @@
+questionary==1.5.2
+scholarly==0.3.3
+tqdm==4.47.0
+jinja2==2.11.2
+beautifulsoup4==4.9.1
+requests==2.24.0
+arxiv==0.5.3

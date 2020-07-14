@@ -1,0 +1,4 @@
+include webfscholar/templates/*.html
+include requirements.txt
+include README.md
+include LICENSE

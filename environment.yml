@@ -1,7 +1,0 @@
-dependencies:
-  - questionary
-  - scholarly
-  - tqdm
-  - jinja2
-  - beautifulsoup4
-  - requests
