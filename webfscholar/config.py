@@ -7,10 +7,10 @@ PATH_CONFIG = "config.ini"
 
 def get_author(args):
     """For use by other scrips"""
-    query = get_cfg_query()
+    query = get_cfg('main.query')
     if query is None or args.reset:
         main(args)
-        query = get_cfg_query()
+        query = get_cfg('main.query')
     return next(scholarly.search_author(query))
 
 
@@ -34,7 +34,7 @@ def author2str(author):
     return f"{author.name} ({author.email})"
 
 
-def get_cfg():
+def cfg():
     config = ConfigParser()
     config.read(PATH_CONFIG)
 
@@ -43,17 +43,21 @@ def get_cfg():
     return config
 
 
-def get_cfg_query():
-    cfg = get_cfg()
-    if 'query' in cfg.options('main'):
-        return cfg.get('main', 'query')
+def get_cfg(fqkey):
+    config = cfg()
+    results = []
+    section, key = fqkey.split('.', 1)
+    if key in config.options(section):
+        return config.get(section, key)
 
 
-def set_cfg_query(query):
-    cfg = get_cfg()
-    cfg.set('main', 'query', query)
+def set_cfg(fqkey_to_value):
+    config = cfg()
+    for fqkey, value in fqkey_to_value.items():
+        section, key = fqkey.split('.', 1)
+        config.set(section, key, value)
     with open(PATH_CONFIG, 'w') as f:
-        cfg.write(f)
+        config.write(f)
 
 
 def pick_author():
@@ -100,7 +104,7 @@ def add_parser(subparsers, parent):
 
 
 def main(args):
-    query = get_cfg_query()
+    query = get_cfg('main.query')
     if query and not args.reset:
         print(f"Already configured with {query}. Use --reset to reset.")
         return
@@ -110,5 +114,5 @@ def main(args):
         author = pick_author()
 
     query = author2str(author)
-    set_cfg_query(query)
-    print(f"Saved {query} to {PATH_CONFIG}.")
+    set_cfg({'main.query': query, 'main.id': author.id})
+    print(f"Saved {query} with ID {author.id} to {PATH_CONFIG}.")
