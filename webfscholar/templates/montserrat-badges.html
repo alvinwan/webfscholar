@@ -216,7 +216,8 @@ h2 span.small {
             <h2>{{ pub['title'] }}</h2>
             <p class="byline"><span>{{ pub['author'] }}</span></p>
           </a>
-          <p><span class="button tight {% if 'arxiv' not in pub['journal'].lower() %}colored{% endif %}">{{ pub['journal'] }} {{ pub['year'] }}</span>
+          <p>
+            {% if pub['journal'] %}<span class="button tight {% if 'arxiv' not in pub['journal'].lower() %}colored{% endif %}">{{ pub['journal'] }} {{ pub['year'] }}</span>{% endif %}
             <a href="{{ pub['url'] }}" class="button tight">Paper</a>
             {% if pub['code'] %}<a href="{{ pub['code'] }}" class="button tight">Code</a>{% endif %}
             <!--<span class="tags"><a href="?s=xai#papers">#xai</a> <a href="?s=nbdt#papers">#nbdt</a></span>--></p>

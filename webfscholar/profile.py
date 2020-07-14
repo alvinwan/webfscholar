@@ -42,7 +42,7 @@ def get_publications(author_id, start=0, length=100):
             content = soup_.findAll(class_='gs_gray')
             publication = {
                 "title": soup_.find(class_='gsc_a_at').text,
-                "author": content[0],
+                "author": content[0].text,
                 "citations": soup_.find(class_='gsc_a_ac').text or '0',
                 "url": 'https://scholar.google.com' + soup_.find(class_='gsc_a_at')['data-href']
             }
@@ -61,23 +61,28 @@ def get_publications(author_id, start=0, length=100):
                     journal, pages = journal.split(",", 1)
                     publication["pages"] = pages
                 publication["journal"] = hook_journal(journal)
+            else:
+                publication["journal"] = ""
 
             # get arxiv data
             if 'arxiv' in publication["journal"].lower():
                 id = publication["journal"].lower().replace("arxiv:", "")
-                paper = arxiv.query(id_list=[id], max_results=1)[0]
+                papers = arxiv.query(id_list=[id], max_results=1)
             else:
                 query = publication['title']
-                paper = arxiv.query(query=query, max_results=1)[0]
+                papers = arxiv.query(query=query, max_results=1)
 
-            if name in paper['authors']:
+            paper = papers[0] if papers else None
+
+            # copy arxiv paper data over to publication
+            if paper and name in paper['authors']:
                 for key in ('id', 'updated', 'published', 'summary'):
                     publication[key] = paper[key]
                 publication['author'] = ' and '.join(paper['authors'])
                 publication['url'] = paper['pdf_url']
 
             # parse code
-            if 'github.com' in publication["summary"]:
+            if 'github.com' in publication.get("summary", ""):
                 for token in publication["summary"].split():
                     if 'github.com' in token.lower():
                         break

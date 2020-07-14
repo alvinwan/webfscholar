@@ -19,6 +19,8 @@ def add_parser(subparsers, parent):
 
 def main(args):
     db = bibtex.get_bibtex(args)
+    if not db.preambles:
+        db = bibtex.get_bibtex(args, force_reset=True)
 
     with open(PATH_TEMPLATES / THEMES[getattr(args, 'theme', 'montserrat-badges')]) as f:
         template = Template(f.read())

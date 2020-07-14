@@ -7,7 +7,7 @@ PATH_CONFIG = "config.ini"
 
 
 def get_author_id(args):
-    if get_cfg('main.id') is None or args.reset:
+    if get_cfg('main.id') is None or getattr(args, 'reset', None):
         main(args)
     return get_cfg('main.id')
 
@@ -17,7 +17,7 @@ def search_author(batch_size=10):
     query = scholarly.search_author(name)
     authors = list(itertools.islice(query, batch_size))
 
-    if len(authors) > 0:
+    if len(authors) > 1:
         return pick_author(query, authors, batch_size)
     if len(authors) == 1:
         return authors[0]

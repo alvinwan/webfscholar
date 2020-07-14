@@ -13,8 +13,8 @@ import os
 PATH_BIBTEX = "references.bib"
 
 
-def get_bibtex(args):
-    if getattr(args, 'reset', False):
+def get_bibtex(args, force_reset=False):
+    if getattr(args, 'reset', False) or force_reset:
         main(args)
     if not os.path.exists(PATH_BIBTEX):
         main(args)
@@ -27,17 +27,24 @@ def add_parser(subparsers, parent):
 
 
 def main(args):
-    publications, name = profile.get_publications(config.get_author_id(args))
+    total_publications = []
+    author_id = config.get_author_id(args)
 
-    for i, publication in tqdm(enumerate(publications)):
+    start, length = 0, 100
+    while start <= len(total_publications):
+        publications, name = profile.get_publications(author_id, start, length)
+        total_publications.extend(publications)
+        start += length
+
+    for i, publication in tqdm(enumerate(total_publications)):
         publication['ENTRYTYPE'] = publication.get('ENTRYTYPE', 'article')
         publication['ID'] = publication.get('ID', str(i))
 
     db = BibDatabase()
-    db.entries = publications
+    db.entries = total_publications
     db.preambles = [json.dumps({"name": name})]
 
     writer = BibTexWriter()
     with open(PATH_BIBTEX, "w") as f:
         f.write(writer.write(db))
-    print(f"Saved {len(publications)} bibtex entries to {PATH_BIBTEX}")
+    print(f"Saved {len(total_publications)} bibtex entries to {PATH_BIBTEX}")
