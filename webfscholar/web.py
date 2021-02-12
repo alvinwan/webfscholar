@@ -17,6 +17,15 @@ def add_parser(subparsers, parent):
     parser_web.add_argument('--theme', choices=THEMES.keys(), default='montserrat-badges')
 
 
+def compare_year(pub):
+    if 'year' in pub:
+        return int(pub['year'])
+    else:
+        # If there's no year, it probably isn't very important, put it at the end.
+        print("WARNING: No publication date is available, this item may not sort properly.")
+        print("\t" + pub['title'])
+        return 0
+
 def main(args):
     db = bibtex.get_bibtex(args)
     if not db.preambles:
@@ -29,6 +38,7 @@ def main(args):
     name = metadata['name']
     publications = db.entries
 
+    publications.sort(key=compare_year, reverse=True)
     for publication in publications:
         publication['author'] = publication['author'] \
             .replace(' and ', ', ') \
