@@ -3,7 +3,7 @@ from jinja2 import Template
 from pathlib import Path
 import os
 import json
-
+from . import logger
 
 PATH_OUT = 'index.html'
 PATH_TEMPLATES = Path(os.path.dirname(os.path.realpath(__file__))) / 'templates'
@@ -22,8 +22,8 @@ def compare_year(pub):
         return int(pub['year'])
     else:
         # If there's no year, it probably isn't very important, put it at the end.
-        print("WARNING: No publication date is available, this item may not sort properly.")
-        print("\t" + pub['title'])
+        logger.warning("WARNING: No publication date is available, this item may not sort properly.")
+        logger.warning("\t" + pub['title'])
         return 0
 
 def main(args):
