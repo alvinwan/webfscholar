@@ -1,6 +1,5 @@
 """Populate local bibtex"""
 
-from scholarly import scholarly
 from webfscholar import config, profile
 from bibtexparser.bwriter import BibTexWriter
 from bibtexparser.bibdatabase import BibDatabase
